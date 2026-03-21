@@ -600,43 +600,18 @@ h1 span {
   }
 }
 
-@media (max-width: 480px) {
-  .hero-left {
-    padding: 110px 16px 28px;
-  }
+/* Page Transitions */
+.page-fade-enter-active,
+.page-fade-leave-active {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
 
-  .hero-right {
-    padding: 24px 16px 110px;
-  }
+.page-fade-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
 
-  .cta-group {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .btn-primary {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .corner-tag {
-    display: none;
-  }
-
-  .hero-number {
-    display: none;
-  }
-
-  .modules-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .module-card.featured,
-  .module-card-advanced {
-    grid-column: auto;
-  }
-
-  .status-bar {
-    gap: 12px;
-  }
+.page-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
 }

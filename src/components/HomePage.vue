@@ -6,6 +6,14 @@
     <nav>
       <div class="nav-logo">CCS — CPS</div>
       <div class="nav-badge">Comprehensive Profiling System &nbsp;|&nbsp; v1.0</div>
+      <div class="nav-auth" v-if="!isAuthenticated">
+        <RouterLink to="/login" class="nav-link">Login</RouterLink>
+        <RouterLink to="/register" class="nav-link">Register</RouterLink>
+      </div>
+      <div class="nav-auth" v-else>
+        <span class="nav-user">Welcome, {{ userName }}</span>
+        <button @click="handleLogout" class="nav-link logout-btn">Logout</button>
+      </div>
       <div class="nav-ready">SYSTEM READY</div>
     </nav>
 
@@ -22,7 +30,8 @@
           intelligent search — all in one integrated ecosystem.
         </p>
         <div class="cta-group">
-          <RouterLink class="btn-primary" to="/student-information">Access System</RouterLink>
+          <RouterLink v-if="isAuthenticated" class="btn-primary" to="/student-information">Access System</RouterLink>
+          <RouterLink v-else class="btn-primary" to="/login">Login to Access</RouterLink>
           <a class="btn-secondary" href="#modules">View Modules</a>
         </div>
       </div>
@@ -78,3 +87,69 @@
     </div>
   </div>
 </template>
+
+<script setup>
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+const isAuthenticated = ref(false);
+
+onMounted(() => {
+  isAuthenticated.value = localStorage.getItem('isAuthenticated') === 'true';
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  if (user.fullName) {
+    userName.value = user.fullName;
+  }
+});
+
+const userName = ref('Admin');
+
+const handleLogout = () => {
+  localStorage.removeItem('isAuthenticated');
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  isAuthenticated.value = false;
+  router.push('/');
+};
+</script>
+
+<style scoped>
+.nav-auth {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #888;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  transition: color 0.3s;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  text-transform: uppercase;
+}
+
+.nav-link:hover {
+  color: white;
+}
+
+.nav-user {
+  font-size: 0.8rem;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+.logout-btn {
+  color: #ff4444;
+}
+
+.logout-btn:hover {
+  color: #ff6666;
+}
+</style>
+
