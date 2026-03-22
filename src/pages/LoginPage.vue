@@ -23,7 +23,7 @@
               type="email" 
               id="email" 
               v-model="email" 
-              placeholder="name@university.edu" 
+              placeholder="name@example.com" 
               required
             />
           </div>
