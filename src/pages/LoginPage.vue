@@ -77,7 +77,14 @@ const handleLogin = async () => {
       localStorage.setItem('isAuthenticated', 'true');
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      router.push('/student-information');
+      
+      if (data.user.role === 'student') {
+        router.push('/student-account');
+      } else if (data.user.role === 'faculty') {
+        router.push('/faculty-account');
+      } else {
+        router.push('/student-information');
+      }
     } else {
       alert(data.message || 'Login failed');
     }

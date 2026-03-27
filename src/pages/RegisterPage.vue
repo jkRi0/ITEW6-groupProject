@@ -18,6 +18,15 @@
         
         <form @submit.prevent="handleRegister" class="auth-form">
           <div class="form-group">
+            <label for="role">Account Type</label>
+            <select id="role" v-model="role" required class="form-select">
+              <option value="" disabled>Select account type</option>
+              <option value="student">Student</option>
+              <option value="faculty">Faculty</option>
+            </select>
+          </div>
+
+          <div class="form-group">
             <label for="fullName">Full Name</label>
             <input 
               type="text" 
@@ -86,6 +95,7 @@ const fullName = ref('');
 const email = ref('');
 const password = ref('');
 const confirmPassword = ref('');
+const role = ref('');
 
 const handleRegister = async () => {
   if (password.value !== confirmPassword.value) {
@@ -100,7 +110,8 @@ const handleRegister = async () => {
       body: JSON.stringify({ 
         fullName: fullName.value, 
         email: email.value, 
-        password: password.value 
+        password: password.value,
+        role: role.value
       })
     });
     
@@ -196,7 +207,8 @@ const handleRegister = async () => {
   opacity: 0.8;
 }
 
-.form-group input {
+.form-group input,
+.form-select {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 107, 26, 0.1);
   padding: 14px;
@@ -207,7 +219,13 @@ const handleRegister = async () => {
   transition: all 0.3s;
 }
 
-.form-group input:focus {
+.form-select option {
+  background: var(--gray);
+  color: var(--white);
+}
+
+.form-group input:focus,
+.form-select:focus {
   border-color: var(--orange);
   background: rgba(255, 107, 26, 0.05);
 }

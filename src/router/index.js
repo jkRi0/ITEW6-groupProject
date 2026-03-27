@@ -9,11 +9,15 @@ import EventsPage from '../pages/EventsPage.vue'
 import SearchFilterPage from '../pages/SearchFilterPage.vue'
 import LoginPage from '../pages/LoginPage.vue'
 import RegisterPage from '../pages/RegisterPage.vue'
+import StudentAccountPage from '../pages/StudentAccountPage.vue'
+import FacultyAccountPage from '../pages/FacultyAccountPage.vue'
 
 const routes = [
   { path: '/', name: 'home', component: HomePage },
   { path: '/login', name: 'login', component: LoginPage },
   { path: '/register', name: 'register', component: RegisterPage },
+  { path: '/student-account', name: 'student-account', component: StudentAccountPage, meta: { requiresAuth: true, role: 'student' } },
+  { path: '/faculty-account', name: 'faculty-account', component: FacultyAccountPage, meta: { requiresAuth: true, role: 'faculty' } },
   { path: '/student-information', name: 'student-information', component: StudentInformationPage, meta: { requiresAuth: true } },
   { path: '/faculty', name: 'faculty', component: FacultyPage, meta: { requiresAuth: true } },
   { path: '/instruction', name: 'instruction', component: InstructionPage, meta: { requiresAuth: true } },
@@ -32,9 +36,15 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true'
+  const user = JSON.parse(localStorage.getItem('user') || '{}')
 
   if (to.meta.requiresAuth && !isAuthenticated) {
     next('/login')
+  } else if (to.meta.requiresAuth && to.meta.role && user.role !== to.meta.role) {
+    // Redirect to their own account page if they try to access the wrong role's page
+    if (user.role === 'student') next('/student-account')
+    else if (user.role === 'faculty') next('/faculty-account')
+    else next('/')
   } else {
     next()
   }

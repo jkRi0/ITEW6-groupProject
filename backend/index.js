@@ -54,6 +54,7 @@ connection.connect(err => {
           fullName VARCHAR(255) NOT NULL,
           email VARCHAR(255) NOT NULL UNIQUE,
           password VARCHAR(255) NOT NULL,
+          role ENUM('student', 'faculty') NOT NULL DEFAULT 'student',
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
       `;
@@ -78,11 +79,11 @@ app.use(checkDb);
 
 // Register Endpoint
 app.post('/api/register', async (req, res) => {
-  const { fullName, email, password } = req.body;
+  const { fullName, email, password, role } = req.body;
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const query = 'INSERT INTO users (fullName, email, password) VALUES (?, ?, ?)';
-    global.db.query(query, [fullName, email, hashedPassword], (err, result) => {
+    const query = 'INSERT INTO users (fullName, email, password, role) VALUES (?, ?, ?, ?)';
+    global.db.query(query, [fullName, email, hashedPassword, role || 'student'], (err, result) => {
       if (err) {
         if (err.code === 'ER_DUP_ENTRY') {
           return res.status(400).json({ message: 'Email already exists' });
@@ -109,7 +110,7 @@ app.post('/api/login', (req, res) => {
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token, user: { id: user.id, fullName: user.fullName, email: user.email } });
+    res.json({ token, user: { id: user.id, fullName: user.fullName, email: user.email, role: user.role } });
   });
 });
 
