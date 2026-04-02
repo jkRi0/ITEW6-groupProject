@@ -1,0 +1,202 @@
+CCS — Comprehensive Profiling System
+Corrected Data Mapping (Option A: Faculty can access only their handled sections/classes and the students enrolled)
+
+Conventions
+- Primary keys: id (INT AUTO_INCREMENT)
+- Foreign keys: <entity>_id
+- Use academic_year (e.g., 2025-2026) and term (e.g., 1st, 2nd, summer)
+- Avoid duplicating names in transactional tables (use FKs and JOIN for display)
+
+1) Authentication / Accounts
+Table: users
+- id (PK)
+- full_name
+- email (UNIQUE)
+- password_hash
+- role ENUM('student','faculty','admin') DEFAULT 'student'
+- created_at
+
+Notes
+- Link users to student/faculty profile via users.id -> students.user_id or faculty.user_id
+
+2) Core Profiles
+Table: students
+- id (PK)
+- user_id (FK -> users.id, UNIQUE)
+- student_number (UNIQUE)
+- first_name
+- middle_name (NULL)
+- last_name
+- gender (NULL)
+- date_of_birth (NULL)
+- email (NULL)              [optional if using users.email as authoritative]
+- contact_number (NULL)
+- nationality (NULL)
+- residency_status (NULL)   [define allowed values if used]
+- present_address (NULL)
+- permanent_address (NULL)
+- emergency_contact_name (NULL)
+- emergency_contact_relationship (NULL)
+- emergency_contact_number (NULL)
+- last_school_attended (NULL)
+- academic_status (e.g., regular, irregular, loa, graduated)
+- created_at
+- updated_at
+
+Table: faculty
+- id (PK)
+- user_id (FK -> users.id, UNIQUE)
+- first_name
+- middle_name (NULL)
+- last_name
+- gender (NULL)
+- email (NULL)              [optional if using users.email as authoritative]
+- contact_number (NULL)
+- expertise (NULL)
+- educational_background (NULL)
+- created_at
+- updated_at
+
+3) Academic Catalog
+Table: courses
+- id (PK)
+- code (UNIQUE)             (e.g., CCS101)
+- title
+- units (NULL)
+
+Table: sections
+- id (PK)
+- course_id (FK -> courses.id)
+- section_name              (e.g., BSIT-2A)
+- academic_year
+- term
+
+4) Scheduling / Teaching Assignments
+Table: schedules
+- id (PK)
+- section_id (FK -> sections.id)
+- faculty_id (FK -> faculty.id)
+- room (NULL)
+- lab (NULL)
+- days_of_week (NULL)       (e.g., M/W/F)
+- start_time (NULL)
+- end_time (NULL)
+
+Important
+- Do NOT store faculty name here; use faculty_id and JOIN.
+
+5) Enrollment (connects students to sections)
+Table: enrollments
+- id (PK)
+- student_id (FK -> students.id)
+- section_id (FK -> sections.id)
+- status (e.g., enrolled, dropped, completed)
+- date_enrolled (NULL)
+
+6) Instruction Content (syllabus/lessons/curriculum)
+Recommended structure:
+Table: course_materials
+- id (PK)
+- course_id (FK -> courses.id)
+- academic_year (NULL)
+- term (NULL)
+- syllabus (TEXT/JSON/URL)  [choose a consistent representation]
+- curriculum (TEXT/JSON/URL)
+
+Table: lessons
+- id (PK)
+- course_id (FK -> courses.id)
+- title
+- content (TEXT/JSON/URL)
+- order_index (NULL)
+
+Notes
+- Instruction is typically per course (and optionally per term/section), not per student.
+
+7) Leadership (Enrichment)
+Table: organizations
+- id (PK)
+- name (UNIQUE)
+
+Table: student_leadership
+- id (PK)
+- student_id (FK -> students.id)
+- organization_id (FK -> organizations.id)
+- designation
+- academic_year
+- date_assigned
+- date_ended (NULL)
+
+Table: faculty_leadership
+- id (PK)
+- faculty_id (FK -> faculty.id)
+- organization_id (FK -> organizations.id)
+- designation
+- academic_year
+- date_assigned
+- date_ended (NULL)
+
+8) Sports (Enrichment)
+Table: sports
+- id (PK)
+- category (NULL)
+- name
+
+Table: student_sports
+- id (PK)
+- student_id (FK -> students.id)
+- sport_id (FK -> sports.id)
+- academic_year (NULL)
+- term_or_season (NULL)
+- role (NULL)               (e.g., player, captain, coach_assistant)
+- participation_level (NULL) (e.g., varsity, intramurals)
+- participation_notes (NULL)
+
+9) Achievements (Enrichment)
+Table: student_achievements
+- id (PK)
+- student_id (FK -> students.id)
+- title
+- issuer (NULL)
+- date_awarded (NULL)
+- level (NULL)              (e.g., department, university, regional, national)
+- description (NULL)
+
+Table: faculty_achievements
+- id (PK)
+- faculty_id (FK -> faculty.id)
+- title
+- issuer (NULL)
+- date_awarded (NULL)
+- level (NULL)
+- description (NULL)
+
+10) Sensitive / Policy-Gated Data (only if you have rules + access control)
+Table: student_violations
+- id (PK)
+- student_id (FK -> students.id)
+- violation_type
+- description (NULL)
+- date_reported
+- sanction (NULL)
+- status (NULL)
+
+Table: student_medical_records
+- id (PK)
+- student_id (FK -> students.id)
+- condition_type (NULL)
+- notes (NULL)
+- last_updated_at
+- last_updated_by_user_id (FK -> users.id)
+
+Access Control Notes (Option A)
+- Faculty can access:
+  - Their own faculty profile (faculty.user_id = users.id)
+  - Sections they handle (schedules.faculty_id = faculty.id)
+  - Students enrolled in those sections (enrollments.section_id in their sections)
+  - Instruction materials for courses/sections they teach
+- Students can access:
+  - Their own student profile (students.user_id = users.id)
+  - Their enrollments and schedules
+  - Their enrichment records (sports, leadership, achievements)
+- Admin can access all (if you add an admin role)
