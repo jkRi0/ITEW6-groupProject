@@ -105,12 +105,14 @@ const showModal = ref(false);
 const editingId = ref(null);
 const draft = ref({});
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+
 function getToken() {
   return localStorage.getItem('token') || '';
 }
 
 async function apiFetch(path, options = {}) {
-  const res = await fetch(`http://localhost:5000/api${path}`, {
+  const res = await fetch(`${API_BASE_URL}${path}`, {
     ...options,
     headers: {
       ...(options.headers || {}),

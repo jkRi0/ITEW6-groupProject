@@ -63,9 +63,11 @@ const router = useRouter();
 const email = ref('');
 const password = ref('');
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+
 const handleLogin = async () => {
   try {
-    const response = await fetch('http://localhost:5000/api/login', {
+    const response = await fetch(`${API_BASE_URL}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: email.value, password: password.value })

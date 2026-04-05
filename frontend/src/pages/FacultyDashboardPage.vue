@@ -62,12 +62,14 @@ const classes = ref([]);
 const notifications = ref([]);
 const stats = ref({ sections: 0, students: 0, alerts: 0 });
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+
 function getToken() {
   return localStorage.getItem('token') || '';
 }
 
 async function apiGet(path) {
-  const res = await fetch(`http://localhost:5000/api${path}`, {
+  const res = await fetch(`${API_BASE_URL}${path}`, {
     headers: {
       Authorization: `Bearer ${getToken()}`
     }

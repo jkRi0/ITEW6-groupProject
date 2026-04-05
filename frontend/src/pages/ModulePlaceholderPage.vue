@@ -77,12 +77,14 @@ const loading = ref(false);
 const error = ref('');
 const items = ref([]);
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+
 function getToken() {
   return localStorage.getItem('token') || '';
 }
 
 async function apiGet(path) {
-  const res = await fetch(`http://localhost:5000/api${path}`, {
+  const res = await fetch(`${API_BASE_URL}${path}`, {
     headers: {
       Authorization: `Bearer ${getToken()}`
     }
