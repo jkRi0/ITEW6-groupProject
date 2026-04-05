@@ -79,9 +79,11 @@ const handleLogin = async () => {
       localStorage.setItem('user', JSON.stringify(data.user));
       
       if (data.user.role === 'student') {
-        router.push('/student-account');
+        router.push('/student/dashboard');
       } else if (data.user.role === 'faculty') {
-        router.push('/faculty-account');
+        router.push('/faculty/dashboard');
+      } else if (data.user.role === 'admin') {
+        router.push('/admin/dashboard');
       } else {
         router.push('/student-information');
       }

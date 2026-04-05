@@ -171,7 +171,97 @@ Table: faculty_achievements
 - level (NULL)
 - description (NULL)
 
-10) Sensitive / Policy-Gated Data (only if you have rules + access control)
+10) Skills (Profiling)
+Table: skills
+- id (PK)
+- name (UNIQUE)
+
+Table: student_skills
+- id (PK)
+- student_id (FK -> students.id)
+- skill_id (FK -> skills.id)
+- level (NULL)
+- evidence_url (NULL)
+- created_at
+- updated_at
+
+11) Academic History (Department-Level)
+Table: student_course_records
+- id (PK)
+- student_id (FK -> students.id)
+- course_id (FK -> courses.id)
+- academic_year
+- term
+- status
+- final_grade (NULL)
+- recorded_at
+- recorded_by_user_id (FK -> users.id, NULL)
+
+12) Events / Trainings (Non-Academic Activities)
+Table: events
+- id (PK)
+- title
+- description (NULL)
+- event_date (NULL)
+- location (NULL)
+- created_by_user_id (FK -> users.id, NULL)
+- created_at
+
+Table: event_participants
+- id (PK)
+- event_id (FK -> events.id)
+- student_id (FK -> students.id)
+- role (NULL)
+- status (NULL)
+- joined_at
+
+13) Advising Notes
+Table: student_advising_notes
+- id (PK)
+- student_id (FK -> students.id)
+- faculty_id (FK -> faculty.id, NULL)
+- note
+- created_at
+- created_by_user_id (FK -> users.id, NULL)
+
+14) Document References (URL/Path)
+Table: documents
+- id (PK)
+- owner_type
+- owner_id
+- doc_type
+- file_url
+- uploaded_by_user_id (FK -> users.id, NULL)
+- created_at
+
+15) Audit Logging
+Table: audit_logs
+- id (PK)
+- actor_user_id (FK -> users.id, NULL)
+- action
+- entity
+- entity_id
+- before_json (NULL)
+- after_json (NULL)
+- created_at
+
+16) Notifications
+Table: notifications
+- id (PK)
+- title
+- message
+- target_role (NULL)
+- target_user_id (FK -> users.id, NULL)
+- created_by_user_id (FK -> users.id, NULL)
+- created_at
+
+Table: notification_reads
+- id (PK)
+- notification_id (FK -> notifications.id)
+- user_id (FK -> users.id)
+- read_at
+
+17) Sensitive / Policy-Gated Data (only if you have rules + access control)
 Table: student_violations
 - id (PK)
 - student_id (FK -> students.id)
@@ -199,4 +289,4 @@ Access Control Notes (Option A)
   - Their own student profile (students.user_id = users.id)
   - Their enrollments and schedules
   - Their enrichment records (sports, leadership, achievements)
-- Admin can access all (if you add an admin role)
+- Admin can access all

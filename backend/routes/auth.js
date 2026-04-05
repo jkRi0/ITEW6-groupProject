@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
-  const { fullName, email, password, role } = req.body;
+  const { fullName, email, password } = req.body;
   if (!fullName || !email || !password) {
     return res.status(400).json({ message: 'Missing required fields' });
   }
@@ -16,7 +16,7 @@ router.post('/register', async (req, res) => {
     const db = req.app.locals.db;
 
     const sql = 'INSERT INTO users (full_name, email, password_hash, role) VALUES (?, ?, ?, ?)';
-    await query(db, sql, [fullName, email, hashedPassword, role || 'student']);
+    await query(db, sql, [fullName, email, hashedPassword, 'student']);
 
     res.status(201).json({ message: 'User registered successfully' });
   } catch (err) {

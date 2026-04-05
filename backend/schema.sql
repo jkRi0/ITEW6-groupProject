@@ -61,6 +61,8 @@ CREATE TABLE IF NOT EXISTS sections (
   section_name VARCHAR(64) NOT NULL,
   academic_year VARCHAR(16) NOT NULL,
   term VARCHAR(16) NOT NULL,
+  UNIQUE KEY uq_sections_course_section_term (course_id, section_name, academic_year, term),
+  KEY idx_sections_course_id (course_id),
   CONSTRAINT fk_sections_course FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE RESTRICT
 );
 
@@ -73,6 +75,8 @@ CREATE TABLE IF NOT EXISTS schedules (
   days_of_week VARCHAR(32) NULL,
   start_time TIME NULL,
   end_time TIME NULL,
+  KEY idx_schedules_section_id (section_id),
+  KEY idx_schedules_faculty_id (faculty_id),
   CONSTRAINT fk_schedules_section FOREIGN KEY (section_id) REFERENCES sections(id) ON DELETE CASCADE,
   CONSTRAINT fk_schedules_faculty FOREIGN KEY (faculty_id) REFERENCES faculty(id) ON DELETE RESTRICT
 );
@@ -83,6 +87,9 @@ CREATE TABLE IF NOT EXISTS enrollments (
   section_id INT NOT NULL,
   status VARCHAR(32) NULL,
   date_enrolled DATE NULL,
+  UNIQUE KEY uq_enrollments_student_section (student_id, section_id),
+  KEY idx_enrollments_student_id (student_id),
+  KEY idx_enrollments_section_id (section_id),
   CONSTRAINT fk_enrollments_student FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
   CONSTRAINT fk_enrollments_section FOREIGN KEY (section_id) REFERENCES sections(id) ON DELETE CASCADE
 );
@@ -196,4 +203,127 @@ CREATE TABLE IF NOT EXISTS student_medical_records (
   last_updated_by_user_id INT NULL,
   CONSTRAINT fk_student_medical_student FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
   CONSTRAINT fk_student_medical_user FOREIGN KEY (last_updated_by_user_id) REFERENCES users(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS skills (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS student_skills (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  student_id INT NOT NULL,
+  skill_id INT NOT NULL,
+  level VARCHAR(32) NULL,
+  evidence_url VARCHAR(512) NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NULL DEFAULT NULL,
+  UNIQUE KEY uq_student_skills_student_skill (student_id, skill_id),
+  KEY idx_student_skills_student_id (student_id),
+  KEY idx_student_skills_skill_id (skill_id),
+  CONSTRAINT fk_student_skills_student FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+  CONSTRAINT fk_student_skills_skill FOREIGN KEY (skill_id) REFERENCES skills(id) ON DELETE RESTRICT
+);
+
+CREATE TABLE IF NOT EXISTS student_course_records (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  student_id INT NOT NULL,
+  course_id INT NOT NULL,
+  academic_year VARCHAR(16) NOT NULL,
+  term VARCHAR(16) NOT NULL,
+  status VARCHAR(32) NOT NULL,
+  final_grade VARCHAR(16) NULL,
+  recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  recorded_by_user_id INT NULL,
+  UNIQUE KEY uq_student_course_records_student_course_term (student_id, course_id, academic_year, term),
+  KEY idx_student_course_records_student_id (student_id),
+  KEY idx_student_course_records_course_id (course_id),
+  KEY idx_student_course_records_recorded_by (recorded_by_user_id),
+  CONSTRAINT fk_student_course_records_student FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+  CONSTRAINT fk_student_course_records_course FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE RESTRICT,
+  CONSTRAINT fk_student_course_records_user FOREIGN KEY (recorded_by_user_id) REFERENCES users(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS events (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  description TEXT NULL,
+  event_date DATE NULL,
+  location VARCHAR(255) NULL,
+  created_by_user_id INT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_events_user FOREIGN KEY (created_by_user_id) REFERENCES users(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS event_participants (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  event_id INT NOT NULL,
+  student_id INT NOT NULL,
+  role VARCHAR(64) NULL,
+  status VARCHAR(32) NULL,
+  joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_event_participants_event_student (event_id, student_id),
+  KEY idx_event_participants_event_id (event_id),
+  KEY idx_event_participants_student_id (student_id),
+  CONSTRAINT fk_event_participants_event FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
+  CONSTRAINT fk_event_participants_student FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS student_advising_notes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  student_id INT NOT NULL,
+  faculty_id INT NULL,
+  note TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  created_by_user_id INT NULL,
+  CONSTRAINT fk_student_advising_notes_student FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+  CONSTRAINT fk_student_advising_notes_faculty FOREIGN KEY (faculty_id) REFERENCES faculty(id) ON DELETE SET NULL,
+  CONSTRAINT fk_student_advising_notes_user FOREIGN KEY (created_by_user_id) REFERENCES users(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS documents (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  owner_type VARCHAR(32) NOT NULL,
+  owner_id INT NOT NULL,
+  doc_type VARCHAR(64) NOT NULL,
+  file_url VARCHAR(1024) NOT NULL,
+  uploaded_by_user_id INT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_documents_user FOREIGN KEY (uploaded_by_user_id) REFERENCES users(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS audit_logs (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  actor_user_id INT NULL,
+  action VARCHAR(64) NOT NULL,
+  entity VARCHAR(64) NOT NULL,
+  entity_id INT NOT NULL,
+  before_json LONGTEXT NULL,
+  after_json LONGTEXT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_audit_logs_user FOREIGN KEY (actor_user_id) REFERENCES users(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS notifications (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  message TEXT NOT NULL,
+  target_role VARCHAR(32) NULL,
+  target_user_id INT NULL,
+  created_by_user_id INT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_notifications_target_user FOREIGN KEY (target_user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT fk_notifications_created_by FOREIGN KEY (created_by_user_id) REFERENCES users(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS notification_reads (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  notification_id INT NOT NULL,
+  user_id INT NOT NULL,
+  read_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_notification_reads_notification_user (notification_id, user_id),
+  KEY idx_notification_reads_notification_id (notification_id),
+  KEY idx_notification_reads_user_id (user_id),
+  CONSTRAINT fk_notification_reads_notification FOREIGN KEY (notification_id) REFERENCES notifications(id) ON DELETE CASCADE,
+  CONSTRAINT fk_notification_reads_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );

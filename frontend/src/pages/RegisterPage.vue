@@ -18,15 +18,6 @@
         
         <form @submit.prevent="handleRegister" class="auth-form">
           <div class="form-group">
-            <label for="role">Account Type</label>
-            <select id="role" v-model="role" required class="form-select">
-              <option value="" disabled>Select account type</option>
-              <option value="student">Student</option>
-              <option value="faculty">Faculty</option>
-            </select>
-          </div>
-
-          <div class="form-group">
             <label for="fullName">Full Name</label>
             <input 
               type="text" 
@@ -95,7 +86,6 @@ const fullName = ref('');
 const email = ref('');
 const password = ref('');
 const confirmPassword = ref('');
-const role = ref('');
 
 const handleRegister = async () => {
   if (password.value !== confirmPassword.value) {
@@ -110,8 +100,7 @@ const handleRegister = async () => {
       body: JSON.stringify({ 
         fullName: fullName.value, 
         email: email.value, 
-        password: password.value,
-        role: role.value
+        password: password.value
       })
     });
     

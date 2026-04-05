@@ -5,6 +5,11 @@ require('dotenv').config();
 const { initDb, query } = require('./db');
 const { initSchema } = require('./schemaInit');
 const authRoutes = require('./routes/auth');
+const academicsRoutes = require('./routes/academics');
+const skillsRoutes = require('./routes/skills');
+const adminRoutes = require('./routes/admin');
+const notificationsRoutes = require('./routes/notifications');
+const { seed } = require('./seed');
 
 const app = express();
 app.use(cors());
@@ -18,6 +23,10 @@ const checkDb = (req, res, next) => {
 
 app.use(checkDb);
 app.use('/api', authRoutes);
+app.use('/api', academicsRoutes);
+app.use('/api', skillsRoutes);
+app.use('/api', adminRoutes);
+app.use('/api', notificationsRoutes);
 
 async function start() {
   try {
@@ -26,6 +35,7 @@ async function start() {
     app.locals.query = query;
 
     await initSchema(db, query);
+    await seed(db, query);
 
     const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => {
