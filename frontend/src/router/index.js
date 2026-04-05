@@ -17,6 +17,7 @@ import ModulePlaceholderPage from '../pages/ModulePlaceholderPage.vue'
 import StudentDashboardPage from '../pages/StudentDashboardPage.vue'
 import FacultyDashboardPage from '../pages/FacultyDashboardPage.vue'
 import AdminDashboardPage from '../pages/AdminDashboardPage.vue'
+import AdminCrudPage from '../pages/AdminCrudPage.vue'
 
 function redirectByRole(targets) {
   return () => {
@@ -97,21 +98,206 @@ const routes = [
     redirect: '/admin/dashboard',
     children: [
       { path: 'dashboard', component: AdminDashboardPage },
-      { path: 'users', component: ModulePlaceholderPage, meta: { title: 'User Management', description: 'Create/edit users, role assignment, password reset (mock for now).', kicker: 'ADMIN', showFilters: true } },
-      { path: 'students', component: ModulePlaceholderPage, meta: { title: 'Student Management', description: 'Full student profiles and documents (mock for now).', kicker: 'ADMIN', showFilters: true, apiPath: '/admin/students' } },
-      { path: 'faculty', component: ModulePlaceholderPage, meta: { title: 'Faculty Management', description: 'Faculty profiles (mock for now).', kicker: 'ADMIN', showFilters: true, apiPath: '/admin/faculty' } },
-      { path: 'courses', component: ModulePlaceholderPage, meta: { title: 'Course Management', description: 'Course catalog management (mock for now).', kicker: 'ADMIN', showFilters: true } },
-      { path: 'sections', component: ModulePlaceholderPage, meta: { title: 'Section Management', description: 'Sections and term structure (mock for now).', kicker: 'ADMIN', showFilters: true } },
-      { path: 'schedules', component: ModulePlaceholderPage, meta: { title: 'Schedule Management', description: 'Faculty assignments and meeting times (mock for now).', kicker: 'ADMIN', showFilters: true } },
-      { path: 'enrollments', component: ModulePlaceholderPage, meta: { title: 'Enrollment Management', description: 'Enrollments by section/term (mock for now).', kicker: 'ADMIN', showFilters: true } },
+      {
+        path: 'users',
+        component: AdminCrudPage,
+        meta: {
+          role: 'admin',
+          crud: {
+            title: 'User Management',
+            apiBase: '/admin/users',
+            columns: ['id', 'full_name', 'email', 'role', 'is_disabled', 'created_at'],
+            fields: [
+              { key: 'full_name', label: 'Full Name' },
+              { key: 'email', label: 'Email' },
+              { key: 'role', label: 'Role', placeholder: 'student / faculty / admin' },
+              { key: 'password', label: 'Password', createOnly: true }
+            ],
+            actions: [
+              {
+                key: 'toggle',
+                label: (row) => (Number(row.is_disabled) === 1 ? 'Enable' : 'Disable'),
+                method: 'POST',
+                path: (row) => (Number(row.is_disabled) === 1 ? '/admin/users/:id/enable' : '/admin/users/:id/disable'),
+                confirm: (row) => (Number(row.is_disabled) === 1 ? `Enable user #${row.id}?` : `Disable user #${row.id}?`)
+              },
+              {
+                key: 'reset',
+                label: 'Reset Password',
+                method: 'POST',
+                path: '/admin/users/:id/reset-password',
+                prompt: (row) => `Enter new password for ${row.email}`
+              }
+            ]
+          }
+        }
+      },
+      {
+        path: 'students',
+        component: AdminCrudPage,
+        meta: {
+          role: 'admin',
+          crud: {
+            title: 'Student Management',
+            apiBase: '/admin/students',
+            columns: ['id', 'student_number', 'first_name', 'last_name', 'academic_status', 'email'],
+            fields: [
+              { key: 'student_number', label: 'Student Number' },
+              { key: 'first_name', label: 'First Name' },
+              { key: 'middle_name', label: 'Middle Name' },
+              { key: 'last_name', label: 'Last Name' },
+              { key: 'gender', label: 'Gender' },
+              { key: 'date_of_birth', label: 'Date of Birth', placeholder: 'YYYY-MM-DD' },
+              { key: 'email', label: 'Email' },
+              { key: 'contact_number', label: 'Contact Number' },
+              { key: 'nationality', label: 'Nationality' },
+              { key: 'residency_status', label: 'Residency Status' },
+              { key: 'present_address', label: 'Present Address' },
+              { key: 'permanent_address', label: 'Permanent Address' },
+              { key: 'emergency_contact_name', label: 'Emergency Contact Name' },
+              { key: 'emergency_contact_relationship', label: 'Emergency Contact Relationship' },
+              { key: 'emergency_contact_number', label: 'Emergency Contact Number' },
+              { key: 'last_school_attended', label: 'Last School Attended' },
+              { key: 'academic_status', label: 'Academic Status' }
+            ]
+          }
+        }
+      },
+      {
+        path: 'faculty',
+        component: AdminCrudPage,
+        meta: {
+          role: 'admin',
+          crud: {
+            title: 'Faculty Management',
+            apiBase: '/admin/faculty',
+            columns: ['id', 'first_name', 'last_name', 'email', 'expertise'],
+            fields: [
+              { key: 'first_name', label: 'First Name' },
+              { key: 'middle_name', label: 'Middle Name' },
+              { key: 'last_name', label: 'Last Name' },
+              { key: 'gender', label: 'Gender' },
+              { key: 'email', label: 'Email' },
+              { key: 'contact_number', label: 'Contact Number' },
+              { key: 'expertise', label: 'Expertise' },
+              { key: 'educational_background', label: 'Educational Background', type: 'textarea' }
+            ]
+          }
+        }
+      },
+      {
+        path: 'courses',
+        component: AdminCrudPage,
+        meta: {
+          role: 'admin',
+          crud: {
+            title: 'Course Management',
+            apiBase: '/admin/courses',
+            columns: ['id', 'code', 'title', 'units'],
+            fields: [
+              { key: 'code', label: 'Code' },
+              { key: 'title', label: 'Title' },
+              { key: 'units', label: 'Units', type: 'number' }
+            ]
+          }
+        }
+      },
+      {
+        path: 'sections',
+        component: AdminCrudPage,
+        meta: {
+          role: 'admin',
+          crud: {
+            title: 'Section Management',
+            apiBase: '/admin/sections',
+            columns: ['id', 'course_id', 'course_code', 'section_name', 'academic_year', 'term'],
+            fields: [
+              { key: 'course_id', label: 'Course ID', type: 'number' },
+              { key: 'section_name', label: 'Section Name' },
+              { key: 'academic_year', label: 'Academic Year', placeholder: '2024-2025' },
+              { key: 'term', label: 'Term', placeholder: '1' }
+            ]
+          }
+        }
+      },
+      {
+        path: 'schedules',
+        component: AdminCrudPage,
+        meta: {
+          role: 'admin',
+          crud: {
+            title: 'Schedule Management',
+            apiBase: '/admin/schedules',
+            columns: ['id', 'section_id', 'section_name', 'course_code', 'faculty_id', 'first_name', 'last_name', 'days_of_week', 'start_time', 'end_time'],
+            fields: [
+              { key: 'section_id', label: 'Section ID', type: 'number' },
+              { key: 'faculty_id', label: 'Faculty ID', type: 'number' },
+              { key: 'room', label: 'Room' },
+              { key: 'lab', label: 'Lab' },
+              { key: 'days_of_week', label: 'Days', placeholder: 'MWF / TTH' },
+              { key: 'start_time', label: 'Start Time', placeholder: '09:00:00' },
+              { key: 'end_time', label: 'End Time', placeholder: '10:00:00' }
+            ]
+          }
+        }
+      },
+      {
+        path: 'enrollments',
+        component: AdminCrudPage,
+        meta: {
+          role: 'admin',
+          crud: {
+            title: 'Enrollment Management',
+            apiBase: '/admin/enrollments',
+            columns: ['id', 'student_id', 'student_number', 'section_id', 'section_name', 'course_code', 'status', 'date_enrolled'],
+            fields: [
+              { key: 'student_id', label: 'Student ID', type: 'number' },
+              { key: 'section_id', label: 'Section ID', type: 'number' },
+              { key: 'status', label: 'Status' },
+              { key: 'date_enrolled', label: 'Date Enrolled', placeholder: 'YYYY-MM-DD' }
+            ]
+          }
+        }
+      },
       { path: 'academic-records', component: ModulePlaceholderPage, meta: { title: 'Academic Records', description: 'View/edit grades with audit (mock for now).', kicker: 'ADMIN', showFilters: true } },
       { path: 'non-academic', component: ModulePlaceholderPage, meta: { title: 'Non-Academic Management', description: 'Events, achievements, participation tracking (mock for now).', kicker: 'ADMIN', showFilters: true } },
-      { path: 'skills', component: ModulePlaceholderPage, meta: { title: 'Skills Management', description: 'Skills library and standardization (mock for now).', kicker: 'ADMIN', showFilters: true } },
+      {
+        path: 'skills',
+        component: AdminCrudPage,
+        meta: {
+          role: 'admin',
+          crud: {
+            title: 'Skills Management',
+            apiBase: '/admin/skills',
+            columns: ['id', 'name'],
+            fields: [
+              { key: 'name', label: 'Skill Name' }
+            ]
+          }
+        }
+      },
       { path: 'affiliations', component: ModulePlaceholderPage, meta: { title: 'Affiliation Management', description: 'Organizations and sports categories (mock for now).', kicker: 'ADMIN', showFilters: true } },
       { path: 'violations', component: ModulePlaceholderPage, meta: { title: 'Violations Management', description: 'Create records, sanctions, and status tracking (mock for now).', kicker: 'ADMIN', showFilters: true } },
       { path: 'medical', component: ModulePlaceholderPage, meta: { title: 'Medical Records', description: 'Sensitive module (mock for now).', kicker: 'ADMIN', showFilters: true } },
       { path: 'documents', component: ModulePlaceholderPage, meta: { title: 'Documents Management', description: 'Document references and uploads (mock for now).', kicker: 'ADMIN', showFilters: true } },
-      { path: 'notifications', component: ModulePlaceholderPage, meta: { title: 'Notifications Management', description: 'Announcements and targeting (mock for now).', kicker: 'ADMIN', showFilters: true } },
+      {
+        path: 'notifications',
+        component: AdminCrudPage,
+        meta: {
+          role: 'admin',
+          crud: {
+            title: 'Notifications Management',
+            apiBase: '/admin/notifications',
+            columns: ['id', 'title', 'target_role', 'target_user_id', 'created_at'],
+            fields: [
+              { key: 'title', label: 'Title' },
+              { key: 'message', label: 'Message', type: 'textarea' },
+              { key: 'target_role', label: 'Target Role', placeholder: 'student / faculty / admin (or blank)' },
+              { key: 'target_user_id', label: 'Target User ID', type: 'number' }
+            ]
+          }
+        }
+      },
       { path: 'audit-logs', component: ModulePlaceholderPage, meta: { title: 'Audit Logs', description: 'Activity history with filters (mock for now).', kicker: 'ADMIN', showFilters: true, apiPath: '/admin/activity' } }
     ]
   }

@@ -47,46 +47,4 @@ router.get('/admin/activity', requireAuth(), requireRole('admin'), async (req, r
   }
 });
 
-router.get('/admin/students', requireAuth(), requireRole('admin'), async (req, res) => {
-  try {
-    const query = req.app.locals.query;
-    const db = req.app.locals.db;
-
-    const rows = await query(
-      db,
-      `SELECT s.id, s.student_number, s.first_name, s.last_name, s.academic_status, s.email,
-              u.email AS user_email
-       FROM students s
-       LEFT JOIN users u ON u.id = s.user_id
-       ORDER BY s.id DESC
-       LIMIT 50`
-    );
-
-    res.json({ items: rows });
-  } catch (err) {
-    res.status(500).json({ message: 'Database error' });
-  }
-});
-
-router.get('/admin/faculty', requireAuth(), requireRole('admin'), async (req, res) => {
-  try {
-    const query = req.app.locals.query;
-    const db = req.app.locals.db;
-
-    const rows = await query(
-      db,
-      `SELECT f.id, f.first_name, f.last_name, f.email, f.expertise,
-              u.email AS user_email
-       FROM faculty f
-       LEFT JOIN users u ON u.id = f.user_id
-       ORDER BY f.id DESC
-       LIMIT 50`
-    );
-
-    res.json({ items: rows });
-  } catch (err) {
-    res.status(500).json({ message: 'Database error' });
-  }
-});
-
 module.exports = router;

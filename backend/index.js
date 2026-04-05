@@ -8,12 +8,17 @@ const authRoutes = require('./routes/auth');
 const academicsRoutes = require('./routes/academics');
 const skillsRoutes = require('./routes/skills');
 const adminRoutes = require('./routes/admin');
+const managementRoutes = require('./routes/management');
 const notificationsRoutes = require('./routes/notifications');
 const { seed } = require('./seed');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+app.get('/api/health', (req, res) => {
+  res.json({ ok: true });
+});
 
 // Middleware to ensure DB is connected
 const checkDb = (req, res, next) => {
@@ -26,6 +31,7 @@ app.use('/api', authRoutes);
 app.use('/api', academicsRoutes);
 app.use('/api', skillsRoutes);
 app.use('/api', adminRoutes);
+app.use('/api', managementRoutes);
 app.use('/api', notificationsRoutes);
 
 async function start() {

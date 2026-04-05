@@ -44,7 +44,7 @@ const navItems = computed(() => {
       { label: 'Sports & Activities', to: '/student/sports' },
       { label: 'Events / Trainings', to: '/student/events' },
       { label: 'Advising Notes', to: '/student/advising-notes' },
-      { label: 'Notifications', to: '/student/notifications' }
+      
     ];
   }
 
@@ -61,7 +61,7 @@ const navItems = computed(() => {
       { label: 'Events Participation', to: '/faculty/events' },
       { label: 'Violations', to: '/faculty/violations' },
       { label: 'Achievements & Leadership', to: '/faculty/affiliations' },
-      { label: 'Notifications', to: '/faculty/notifications' }
+      
     ];
   }
 
@@ -82,7 +82,7 @@ const navItems = computed(() => {
       { label: 'Violations', to: '/admin/violations' },
       { label: 'Medical Records', to: '/admin/medical' },
       { label: 'Documents', to: '/admin/documents' },
-      { label: 'Notifications', to: '/admin/notifications' },
+      
       { label: 'Audit Logs', to: '/admin/audit-logs' }
     ];
   }
