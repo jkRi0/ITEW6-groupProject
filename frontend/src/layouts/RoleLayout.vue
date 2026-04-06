@@ -4,6 +4,7 @@
       <RouterLink to="/" class="nav-logo">CCS — CPS</RouterLink>
       <div class="nav-badge">{{ badgeText }} &nbsp;|&nbsp; v1.0</div>
       <div class="nav-actions">
+        <div v-if="displayName" class="nav-user">{{ displayName }}</div>
         <button class="nav-bell" @click="toggleNotif" aria-label="Notifications">
           <span class="nav-bell__icon">🔔</span>
           <span v-if="unreadCount > 0" class="nav-bell__badge">{{ unreadCount }}</span>
@@ -52,11 +53,18 @@
 import { computed, onMounted, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import SidebarNav from '../components/SidebarNav.vue';
+import { session } from '../session.js';
 
 const router = useRouter();
 const route = useRoute();
 
 const role = computed(() => route.meta.role || 'student');
+
+const displayName = computed(() => {
+  const u = session.state.user;
+  if (!u) return '';
+  return u.full_name || u.email || '';
+});
 
 const badgeText = computed(() => {
   if (role.value === 'student') return 'Student Portal';
@@ -145,9 +153,7 @@ async function markRead(n) {
 }
 
 const handleLogout = () => {
-  localStorage.removeItem('isAuthenticated');
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
+  session.clearSession();
   router.push('/login');
 };
 
@@ -200,6 +206,16 @@ onMounted(refreshUnread);
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.nav-user {
+  color: rgba(245, 245, 240, 0.65);
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.8px;
+  padding: 8px 10px;
+  border: 1px solid rgba(255, 107, 26, 0.18);
+  background: rgba(255, 107, 26, 0.06);
 }
 
 .nav-bell {

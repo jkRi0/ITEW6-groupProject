@@ -68,7 +68,8 @@ const navItems = computed(() => {
   if (props.role === 'admin') {
     return [
       { label: 'Dashboard', to: '/admin/dashboard' },
-      { label: 'User Management', to: '/admin/users' },
+      { label: 'Users', to: '/admin/users' },
+      { label: 'User Management (CRUD)', to: '/admin/users/manage' },
       { label: 'Student Management', to: '/admin/students' },
       { label: 'Faculty Management', to: '/admin/faculty' },
       { label: 'Course Management', to: '/admin/courses' },

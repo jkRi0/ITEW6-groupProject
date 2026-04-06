@@ -18,6 +18,8 @@ import StudentDashboardPage from '../pages/StudentDashboardPage.vue'
 import FacultyDashboardPage from '../pages/FacultyDashboardPage.vue'
 import AdminDashboardPage from '../pages/AdminDashboardPage.vue'
 import AdminCrudPage from '../pages/AdminCrudPage.vue'
+import AdminUsersPage from '../pages/AdminUsersPage.vue'
+import AdminUserDetailsPage from '../pages/AdminUserDetailsPage.vue'
 
 function redirectByRole(targets) {
   return () => {
@@ -100,6 +102,16 @@ const routes = [
       { path: 'dashboard', component: AdminDashboardPage },
       {
         path: 'users',
+        component: AdminUsersPage,
+        meta: { requiresAuth: true, role: 'admin' },
+      },
+      {
+        path: 'users/:id',
+        component: AdminUserDetailsPage,
+        meta: { requiresAuth: true, role: 'admin' },
+      },
+      {
+        path: 'users/manage',
         component: AdminCrudPage,
         meta: {
           role: 'admin',

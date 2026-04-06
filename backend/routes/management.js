@@ -50,6 +50,25 @@ router.get('/admin/users', async (req, res) => {
   }
 });
 
+router.get('/admin/users/:id', async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (!id) return res.status(400).json({ message: 'Invalid id' });
+
+    const { db, query } = req.app.locals;
+    const rows = await query(
+      db,
+      'SELECT id, full_name, email, role, is_disabled, disabled_at, created_at FROM users WHERE id = ? LIMIT 1',
+      [id]
+    );
+
+    if (!Array.isArray(rows) || rows.length === 0) return res.status(404).json({ message: 'Not found' });
+    res.json({ item: rows[0] });
+  } catch (err) {
+    res.status(500).json({ message: 'Database error' });
+  }
+});
+
 router.post('/admin/users', requireBodyFields(['full_name', 'email', 'password', 'role']), async (req, res) => {
   try {
     const { full_name, email, password, role } = req.body;

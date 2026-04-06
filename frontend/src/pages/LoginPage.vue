@@ -58,6 +58,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { session } from '../session.js';
 
 const router = useRouter();
 const email = ref('');
@@ -76,9 +77,7 @@ const handleLogin = async () => {
     const data = await response.json();
     
     if (response.ok) {
-      localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
+      session.setSession({ token: data.token, user: data.user });
       
       if (data.user.role === 'student') {
         router.push('/student/dashboard');
