@@ -125,8 +125,8 @@ onMounted(async () => {
 }
 
 .card {
-  border: 1px solid rgba(255, 107, 26, 0.12);
-  background: rgba(26, 26, 26, 0.55);
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
   padding: 14px;
 }
 
@@ -135,37 +135,33 @@ onMounted(async () => {
   font-size: 10px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: rgba(255, 107, 26, 0.85);
+  color: var(--orange);
   margin-bottom: 12px;
+  opacity: 0.85;
 }
 
 .card__item {
   padding: 10px 0;
-  border-top: 1px solid rgba(255, 107, 26, 0.08);
-}
-
-.card__item:first-of-type {
-  border-top: none;
-  padding-top: 0;
+  border-top: 1px solid var(--card-border);
 }
 
 .card__itemTitle {
-  color: var(--white);
+  color: var(--text-color);
   font-size: 13px;
 }
 
 .card__itemMeta {
-  color: rgba(245, 245, 240, 0.45);
+  color: var(--dim-text);
   font-size: 12px;
   margin-top: 2px;
 }
 
 .banner {
   margin-top: 14px;
-  border: 1px solid rgba(255, 107, 26, 0.12);
-  background: rgba(26, 26, 26, 0.55);
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
   padding: 12px 14px;
-  color: rgba(245, 245, 240, 0.65);
+  color: var(--dim-text);
   font-size: 13px;
 }
 
@@ -175,7 +171,7 @@ onMounted(async () => {
 }
 
 .empty {
-  color: rgba(245, 245, 240, 0.45);
+  color: var(--dim-text);
   font-size: 12px;
   padding: 8px 0;
 }
@@ -187,8 +183,8 @@ onMounted(async () => {
 }
 
 .stat {
-  border: 1px solid rgba(255, 107, 26, 0.1);
-  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--card-border);
+  background: var(--panel-bg);
   padding: 12px;
 }
 
@@ -197,7 +193,7 @@ onMounted(async () => {
   font-size: 10px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: rgba(245, 245, 240, 0.45);
+  color: var(--dim-text);
 }
 
 .stat__value {
@@ -205,6 +201,7 @@ onMounted(async () => {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 32px;
   letter-spacing: 2px;
+  color: var(--text-color);
 }
 
 @media (max-width: 900px) {

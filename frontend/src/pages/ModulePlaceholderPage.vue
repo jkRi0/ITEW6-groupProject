@@ -12,18 +12,20 @@
       <div v-else-if="loading" class="banner">Loading…</div>
 
       <div v-if="showFilters" class="filters">
-        <div class="filters__title">Filters (UI stub)</div>
+        <div class="filters__title">Filters</div>
         <div class="filters__grid">
-          <input class="filters__input" placeholder="Search" v-model="search" />
+          <input class="filters__input" placeholder="Search keyword..." v-model="search" />
+          
+          <!-- Dynamic Filter A -->
           <select class="filters__input" v-model="filterA">
-            <option value="">Filter A</option>
-            <option value="one">One</option>
-            <option value="two">Two</option>
+            <option value="">{{ filterALabel }}</option>
+            <option v-for="opt in filterAOptions" :key="opt" :value="opt">{{ opt }}</option>
           </select>
+
+          <!-- Dynamic Filter B -->
           <select class="filters__input" v-model="filterB">
-            <option value="">Filter B</option>
-            <option value="x">X</option>
-            <option value="y">Y</option>
+            <option value="">{{ filterBLabel }}</option>
+            <option v-for="opt in filterBOptions" :key="opt" :value="opt">{{ opt }}</option>
           </select>
         </div>
       </div>
@@ -111,9 +113,97 @@ async function load() {
   }
 }
 
+const filterALabel = computed(() => {
+  const t = title.value;
+  if (t.includes('Achievements')) return 'All Categories';
+  if (t.includes('Leadership') || t.includes('Affiliations')) return 'All Status';
+  if (t.includes('Events')) return 'All Types';
+  if (t.includes('Sports')) return 'All Roles';
+  if (t.includes('Sections') || t.includes('Classes')) return 'All Academic Years';
+  if (t.includes('Student Search') || t.includes('Student Profile')) return 'All Status';
+  if (t.includes('Grades') || t.includes('Records')) return 'All Status';
+  if (t.includes('Violations')) return 'All Types';
+  return 'Filter A';
+});
+
+const filterBLabel = computed(() => {
+  const t = title.value;
+  if (t.includes('Achievements')) return 'All Awards';
+  if (t.includes('Leadership') || t.includes('Affiliations')) return 'All Positions';
+  if (t.includes('Events')) return 'All Organizers';
+  if (t.includes('Sports')) return 'All Teams';
+  if (t.includes('Sections') || t.includes('Classes')) return 'All Terms';
+  if (t.includes('Student Search') || t.includes('Student Profile')) return 'All Sections';
+  if (t.includes('Grades') || t.includes('Records')) return 'All Courses';
+  if (t.includes('Violations')) return 'All Status';
+  return 'Filter B';
+});
+
+const filterAOptions = computed(() => {
+  const t = title.value;
+  const key = t.includes('Achievements') ? 'category' : 
+              (t.includes('Leadership') || t.includes('Affiliations')) ? 'status' :
+              t.includes('Events') ? 'event_type' : 
+              t.includes('Sports') ? 'role' : 
+              (t.includes('Sections') || t.includes('Classes')) ? 'academic_year' :
+              (t.includes('Student Search') || t.includes('Student Profile')) ? 'academic_status' :
+              (t.includes('Grades') || t.includes('Records')) ? 'status' :
+              t.includes('Violations') ? 'violation_type' : null;
+  if (!key) return [];
+  const set = new Set(items.value.map(i => i[key]).filter(Boolean));
+  return Array.from(set).sort();
+});
+
+const filterBOptions = computed(() => {
+  const t = title.value;
+  const key = t.includes('Achievements') ? 'award' : 
+              (t.includes('Leadership') || t.includes('Affiliations')) ? 'position' :
+              t.includes('Events') ? 'organizer' : 
+              t.includes('Sports') ? 'team_name' : 
+              (t.includes('Sections') || t.includes('Classes')) ? 'term' :
+              (t.includes('Student Search') || t.includes('Student Profile')) ? 'section_name' :
+              (t.includes('Grades') || t.includes('Records')) ? 'course_code' :
+              t.includes('Violations') ? 'status' : null;
+  if (!key) return [];
+  const set = new Set(items.value.map(i => i[key]).filter(Boolean));
+  return Array.from(set).sort();
+});
+
 const columns = computed(() => {
   if (Array.isArray(items.value) && items.value.length > 0) {
-    return Object.keys(items.value[0]).slice(0, 8);
+    const t = title.value;
+    // Priority columns for different modules
+    if (t.includes('Achievements')) {
+      return ['title', 'issuer', 'date_awarded', 'level', 'description'];
+    }
+    if (t.includes('Leadership')) {
+      return ['organization_name', 'position', 'term_start', 'term_end', 'status'];
+    }
+    if (t.includes('Sports')) {
+      return ['activity_name', 'role', 'team_name', 'academic_year', 'participation_level'];
+    }
+    if (t.includes('Events')) {
+      return ['title', 'event_type', 'organizer', 'event_date', 'venue'];
+    }
+    if (t.includes('Sections') || t.includes('Classes')) {
+      return ['course_code', 'course_title', 'section_name', 'academic_year', 'term'];
+    }
+    if (t.includes('Student Search') || t.includes('Student Profile')) {
+      return ['student_number', 'first_name', 'last_name', 'section_name', 'academic_status'];
+    }
+    if (t.includes('Grades') || t.includes('Records')) {
+      return ['student_number', 'last_name', 'course_code', 'final_grade', 'status', 'academic_year'];
+    }
+    if (t.includes('Materials')) {
+      return ['course_code', 'course_title', 'syllabus', 'curriculum'];
+    }
+    if (t.includes('Violations')) {
+      return ['student_number', 'last_name', 'violation_type', 'date_reported', 'status'];
+    }
+    if (t.includes('Affiliations')) {
+      return ['title', 'issuer', 'date_awarded', 'level', 'organization_name', 'designation'];
+    }
+    return Object.keys(items.value[0]).filter(k => !k.toLowerCase().includes('id')).slice(0, 8);
   }
   return ['id'];
 });
@@ -128,11 +218,20 @@ const filteredItems = computed(() => {
     });
   }
 
+  // Smart filters based on title/module
   if (filterA.value) {
-    out = out.filter((row) => String(row.filterA || row.status || '').toLowerCase().includes(filterA.value));
+    const fA = filterA.value.toLowerCase();
+    out = out.filter((row) => {
+      const val = (row.category || row.status || row.event_type || row.academic_year || row.academic_status || row.violation_type || '').toLowerCase();
+      return String(val).includes(fA);
+    });
   }
   if (filterB.value) {
-    out = out.filter((row) => String(row.filterB || row.level || '').toLowerCase().includes(filterB.value));
+    const fB = filterB.value.toLowerCase();
+    out = out.filter((row) => {
+      const val = (row.award || row.position || row.role || row.organizer || row.term || row.section_name || row.course_code || '').toLowerCase();
+      return String(val).includes(fB);
+    });
   }
 
   return out;
@@ -146,8 +245,8 @@ watch(() => apiPath.value, load);
 .filters {
   margin-top: 18px;
   margin-bottom: 18px;
-  border: 1px solid rgba(255, 107, 26, 0.12);
-  background: rgba(26, 26, 26, 0.55);
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
   padding: 14px;
 }
 
@@ -156,7 +255,7 @@ watch(() => apiPath.value, load);
   font-size: 10px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: rgba(255, 107, 26, 0.85);
+  color: var(--orange);
   margin-bottom: 12px;
 }
 
@@ -167,10 +266,10 @@ watch(() => apiPath.value, load);
 }
 
 .filters__input {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 107, 26, 0.1);
+  background: var(--input-bg);
+  border: 1px solid var(--card-border);
   padding: 12px;
-  color: var(--white);
+  color: var(--text-color);
   font-family: 'DM Sans', sans-serif;
   font-size: 14px;
   outline: none;
@@ -178,10 +277,10 @@ watch(() => apiPath.value, load);
 
 .banner {
   margin-top: 14px;
-  border: 1px solid rgba(255, 107, 26, 0.12);
-  background: rgba(26, 26, 26, 0.55);
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
   padding: 12px 14px;
-  color: rgba(245, 245, 240, 0.65);
+  color: var(--dim-text);
   font-size: 13px;
 }
 
@@ -196,8 +295,8 @@ watch(() => apiPath.value, load);
 
 .tableWrap {
   overflow: auto;
-  border: 1px solid rgba(255, 107, 26, 0.12);
-  background: rgba(26, 26, 26, 0.55);
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
 }
 
 .table {
@@ -210,9 +309,10 @@ watch(() => apiPath.value, load);
 .table td {
   text-align: left;
   padding: 10px 12px;
-  border-bottom: 1px solid rgba(255, 107, 26, 0.08);
-  color: rgba(245, 245, 240, 0.65);
+  border-bottom: 1px solid var(--card-border);
+  color: var(--text-color);
   font-size: 12px;
+  opacity: 0.8;
 }
 
 .table th {
@@ -220,20 +320,20 @@ watch(() => apiPath.value, load);
   font-size: 10px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: rgba(255, 107, 26, 0.85);
-  background: rgba(255, 255, 255, 0.02);
+  color: var(--orange);
+  background: var(--panel-bg);
 }
 
 .empty {
-  color: rgba(245, 245, 240, 0.45);
+  color: var(--dim-text);
   font-size: 12px;
   padding: 8px 0;
 }
 
 .placeholder {
   margin-top: 18px;
-  border: 1px solid rgba(255, 107, 26, 0.12);
-  background: rgba(255, 107, 26, 0.05);
+  border: 1px solid var(--card-border);
+  background: var(--panel-bg);
   padding: 18px;
 }
 
@@ -242,12 +342,12 @@ watch(() => apiPath.value, load);
   font-size: 10px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: rgba(255, 107, 26, 0.85);
+  color: var(--orange);
   margin-bottom: 8px;
 }
 
 .placeholder__text {
-  color: rgba(245, 245, 240, 0.6);
+  color: var(--dim-text);
   font-size: 13px;
   line-height: 1.7;
 }

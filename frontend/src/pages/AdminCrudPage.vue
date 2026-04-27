@@ -282,10 +282,10 @@ watch(() => apiBase.value, load);
 <style scoped>
 .banner {
   margin-top: 14px;
-  border: 1px solid rgba(255, 107, 26, 0.12);
-  background: rgba(26, 26, 26, 0.55);
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
   padding: 12px 14px;
-  color: rgba(245, 245, 240, 0.65);
+  color: var(--dim-text);
   font-size: 13px;
 }
 
@@ -299,27 +299,38 @@ watch(() => apiBase.value, load);
   display: flex;
   gap: 10px;
   align-items: center;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  padding: 12px 14px;
 }
 
 .toolbar__search {
   flex: 1;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 107, 26, 0.1);
+  background: var(--input-bg);
+  border: 1px solid var(--card-border);
   padding: 12px;
-  color: var(--white);
+  color: var(--text-color);
   font-family: 'DM Sans', sans-serif;
   font-size: 14px;
   outline: none;
 }
 
 .btn {
-  border: 1px solid rgba(255, 107, 26, 0.35);
-  background: rgba(255, 107, 26, 0.12);
-  color: rgba(245, 245, 240, 0.85);
+  border: 1px solid var(--orange);
+  background: rgba(255, 107, 26, 0.1);
+  color: var(--text-color);
   font-family: 'Space Mono', monospace;
   font-size: 12px;
   padding: 10px 12px;
   cursor: pointer;
+  transition: all 0.2s;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+}
+
+.btn:hover {
+  background: var(--orange);
+  color: #fff;
+  transform: translateY(-1px);
 }
 
 .btn--ghost {
@@ -334,8 +345,8 @@ watch(() => apiBase.value, load);
 .tableWrap {
   margin-top: 12px;
   overflow: auto;
-  border: 1px solid rgba(255, 107, 26, 0.12);
-  background: rgba(26, 26, 26, 0.55);
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
 }
 
 .table {
@@ -348,8 +359,8 @@ watch(() => apiBase.value, load);
 .table td {
   text-align: left;
   padding: 10px 12px;
-  border-bottom: 1px solid rgba(255, 107, 26, 0.08);
-  color: rgba(245, 245, 240, 0.65);
+  border-bottom: 1px solid var(--card-border);
+  color: var(--text-color);
   font-size: 12px;
 }
 
@@ -358,8 +369,8 @@ watch(() => apiBase.value, load);
   font-size: 10px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: rgba(255, 107, 26, 0.85);
-  background: rgba(255, 255, 255, 0.02);
+  color: var(--orange);
+  background: var(--panel-bg);
 }
 
 .actions {
@@ -368,7 +379,7 @@ watch(() => apiBase.value, load);
 }
 
 .empty {
-  color: rgba(245, 245, 240, 0.45);
+  color: var(--dim-text);
   font-size: 12px;
   padding: 10px 0;
 }
@@ -377,36 +388,42 @@ watch(() => apiBase.value, load);
   position: fixed;
   inset: 0;
   z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .modal__backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
 }
 
 .modal__panel {
   position: relative;
   width: min(760px, calc(100% - 24px));
-  margin: 90px auto;
-  border: 1px solid rgba(255, 107, 26, 0.18);
-  background: rgba(26, 26, 26, 0.92);
-  padding: 16px;
+  border: 1px solid var(--orange);
+  background: var(--bg-color);
+  padding: 32px;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .modal__title {
-  font-family: 'Space Mono', monospace;
-  font-size: 12px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px;
   letter-spacing: 2px;
-  text-transform: uppercase;
-  color: rgba(255, 107, 26, 0.85);
-  margin-bottom: 12px;
+  color: var(--text-color);
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--card-border);
+  padding-bottom: 12px;
 }
 
 .form {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 20px;
 }
 
 .form__row {
@@ -420,24 +437,30 @@ watch(() => apiBase.value, load);
   font-size: 10px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: rgba(245, 245, 240, 0.55);
+  color: var(--dim-text);
 }
 
 .form__input {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 107, 26, 0.1);
-  padding: 10px;
-  color: var(--white);
+  background: var(--input-bg);
+  border: 1px solid var(--card-border);
+  padding: 12px;
+  color: var(--text-color);
   font-family: 'DM Sans', sans-serif;
   font-size: 14px;
   outline: none;
+  transition: all 0.2s;
+}
+
+.form__input:focus {
+  border-color: var(--orange);
+  background: var(--panel-bg);
 }
 
 .modal__actions {
-  margin-top: 14px;
+  margin-top: 32px;
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 12px;
 }
 
 @media (max-width: 900px) {

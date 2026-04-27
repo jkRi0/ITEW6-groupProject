@@ -15,11 +15,19 @@ import FacultyAccountPage from '../pages/FacultyAccountPage.vue'
 import RoleLayout from '../layouts/RoleLayout.vue'
 import ModulePlaceholderPage from '../pages/ModulePlaceholderPage.vue'
 import StudentDashboardPage from '../pages/StudentDashboardPage.vue'
+import StudentSchedulePage from '../pages/StudentSchedulePage.vue'
+import StudentEnrollmentsPage from '../pages/StudentEnrollmentsPage.vue'
+import StudentAcademicRecordsPage from '../pages/StudentAcademicRecordsPage.vue'
+import StudentSkillsPage from '../pages/StudentSkillsPage.vue'
+import StudentLeadershipPage from '../pages/StudentLeadershipPage.vue'
 import FacultyDashboardPage from '../pages/FacultyDashboardPage.vue'
 import AdminDashboardPage from '../pages/AdminDashboardPage.vue'
 import AdminCrudPage from '../pages/AdminCrudPage.vue'
 import AdminUsersPage from '../pages/AdminUsersPage.vue'
 import AdminUserDetailsPage from '../pages/AdminUserDetailsPage.vue'
+import StudentProfilePage from '../pages/StudentProfilePage.vue'
+import StudentMaterialsPage from '../pages/StudentMaterialsPage.vue'
+import FacultyProfilePage from '../pages/FacultyProfilePage.vue'
 
 function redirectByRole(targets) {
   return () => {
@@ -57,17 +65,46 @@ const routes = [
     redirect: '/student/dashboard',
     children: [
       { path: 'dashboard', component: StudentDashboardPage },
-      { path: 'profile', component: ModulePlaceholderPage, meta: { title: 'My Profile', description: 'Personal details, contact info, address, emergency contacts, and documents.', kicker: 'STUDENT' } },
-      { path: 'schedule', component: ModulePlaceholderPage, meta: { title: 'My Schedule', description: 'Weekly calendar and class details (mock for now).', kicker: 'STUDENT', showFilters: true } },
-      { path: 'enrollments', component: ModulePlaceholderPage, meta: { title: 'My Courses / Enrollments', description: 'Enrolled subjects and status (mock for now).', kicker: 'STUDENT', showFilters: true } },
-      { path: 'academic-records', component: ModulePlaceholderPage, meta: { title: 'Academic Records', description: 'Grades by term/year and course history (mock for now).', kicker: 'STUDENT', showFilters: true } },
-      { path: 'materials', component: ModulePlaceholderPage, meta: { title: 'Learning Materials', description: 'Syllabus and lessons viewer (mock for now).', kicker: 'STUDENT' } },
-      { path: 'skills', component: ModulePlaceholderPage, meta: { title: 'Skills Profile', description: 'Skills list and evidence links (mock for now).', kicker: 'STUDENT', showFilters: true, apiPath: '/skills/student/list' } },
-      { path: 'achievements', component: ModulePlaceholderPage, meta: { title: 'Achievements', description: 'Awards and achievements (mock for now).', kicker: 'STUDENT', showFilters: true, apiPath: '/achievements/student/list' } },
-      { path: 'leadership', component: ModulePlaceholderPage, meta: { title: 'Leadership & Organizations', description: 'Organizations and roles timeline (mock for now).', kicker: 'STUDENT', showFilters: true } },
-      { path: 'sports', component: ModulePlaceholderPage, meta: { title: 'Sports & Activities', description: 'Sports participation and roles (mock for now).', kicker: 'STUDENT', showFilters: true } },
-      { path: 'events', component: ModulePlaceholderPage, meta: { title: 'Events / Trainings', description: 'Available and joined events (mock for now).', kicker: 'STUDENT', showFilters: true } },
-      { path: 'advising-notes', component: ModulePlaceholderPage, meta: { title: 'Advising Notes', description: 'Read-only notes and feedback (mock for now).', kicker: 'STUDENT' } },
+      { path: 'profile', component: StudentProfilePage },
+      { path: 'schedule', component: StudentSchedulePage },
+      { path: 'enrollments', component: StudentEnrollmentsPage },
+      { path: 'academic-records', component: StudentAcademicRecordsPage },
+      { path: 'materials', component: StudentMaterialsPage },
+      { path: 'skills', component: StudentSkillsPage },
+      { 
+        path: 'achievements', 
+        component: ModulePlaceholderPage,
+        meta: { 
+          title: 'Achievements', 
+          kicker: '04', 
+          description: 'Recognitions, awards, and certifications.',
+          showFilters: true,
+          apiPath: '/skills/student/achievements'
+        }
+      },
+      { path: 'leadership', component: StudentLeadershipPage },
+      { 
+        path: 'sports', 
+        component: ModulePlaceholderPage,
+        meta: { 
+          title: 'Sports & Activities', 
+          kicker: '06', 
+          description: 'Athletic participation and extra-curricular activities.',
+          showFilters: true,
+          apiPath: '/skills/student/sports' 
+        }
+      },
+      { 
+        path: 'events', 
+        component: ModulePlaceholderPage,
+        meta: { 
+          title: 'Events / Trainings', 
+          kicker: '07', 
+          description: 'Seminars, workshops, and school events.',
+          showFilters: true,
+          apiPath: '/skills/student/events'
+        }
+      },
       { path: 'notifications', component: ModulePlaceholderPage, meta: { title: 'Notifications', description: 'Read/unread notifications (mock for now).', kicker: 'STUDENT', showFilters: true, apiPath: '/notifications/my' } }
     ]
   },
@@ -79,17 +116,15 @@ const routes = [
     redirect: '/faculty/dashboard',
     children: [
       { path: 'dashboard', component: FacultyDashboardPage },
-      { path: 'profile', component: ModulePlaceholderPage, meta: { title: 'My Profile', description: 'Personal info, expertise/background, and documents (mock for now).', kicker: 'FACULTY' } },
-      { path: 'classes', component: ModulePlaceholderPage, meta: { title: 'My Classes / Sections', description: 'Assigned sections list with filters (mock for now).', kicker: 'FACULTY', showFilters: true } },
-      { path: 'roster', component: ModulePlaceholderPage, meta: { title: 'Class Roster', description: 'Student list per section with search and filters (mock for now).', kicker: 'FACULTY', showFilters: true } },
-      { path: 'student-profile', component: ModulePlaceholderPage, meta: { title: 'Student Profile (Restricted)', description: 'Limited student view (mock for now).', kicker: 'FACULTY', showFilters: true } },
-      { path: 'academic-records', component: ModulePlaceholderPage, meta: { title: 'Academic Records Management', description: 'Encode grades and update statuses (mock for now).', kicker: 'FACULTY', showFilters: true } },
-      { path: 'materials', component: ModulePlaceholderPage, meta: { title: 'Teaching Materials', description: 'Upload/edit syllabus and manage lessons (mock for now).', kicker: 'FACULTY' } },
-      { path: 'advising-notes', component: ModulePlaceholderPage, meta: { title: 'Advising Notes', description: 'Add note and view history (mock for now).', kicker: 'FACULTY', showFilters: true } },
-      { path: 'events', component: ModulePlaceholderPage, meta: { title: 'Events Participation', description: 'Track student participation (mock for now).', kicker: 'FACULTY', showFilters: true } },
-      { path: 'violations', component: ModulePlaceholderPage, meta: { title: 'Violations', description: 'Limited access for handled students (mock for now).', kicker: 'FACULTY', showFilters: true } },
-      { path: 'affiliations', component: ModulePlaceholderPage, meta: { title: 'Achievements & Leadership', description: 'Faculty achievements and org roles (mock for now).', kicker: 'FACULTY', showFilters: true } },
-      { path: 'notifications', component: ModulePlaceholderPage, meta: { title: 'Notifications', description: 'Read/unread notifications (mock for now).', kicker: 'FACULTY', showFilters: true } }
+      { path: 'profile', component: FacultyProfilePage },
+      { path: 'classes', component: ModulePlaceholderPage, meta: { title: 'My Classes / Sections', description: 'Assigned sections list with filters.', kicker: 'FACULTY', showFilters: true, apiPath: '/academics/faculty/sections' } },
+      { path: 'student-profile', component: ModulePlaceholderPage, meta: { title: 'Student Search & Profile', description: 'Search and view student profiles.', kicker: 'FACULTY', showFilters: true, apiPath: '/academics/faculty/students' } },
+      { path: 'academic-records', component: ModulePlaceholderPage, meta: { title: 'Academic Records Management', description: 'Encode grades and update statuses.', kicker: 'FACULTY', showFilters: true, apiPath: '/academics/faculty/grades' } },
+      { path: 'materials', component: ModulePlaceholderPage, meta: { title: 'Teaching Materials', description: 'Upload/edit syllabus and manage lessons.', kicker: 'FACULTY', apiPath: '/academics/faculty/materials' } },
+      { path: 'events', component: ModulePlaceholderPage, meta: { title: 'Events Participation', description: 'Track student participation.', kicker: 'FACULTY', showFilters: true, apiPath: '/academics/faculty/events' } },
+      { path: 'violations', component: ModulePlaceholderPage, meta: { title: 'Violations', description: 'Limited access for handled students.', kicker: 'FACULTY', showFilters: true, apiPath: '/academics/faculty/violations' } },
+      { path: 'affiliations', component: ModulePlaceholderPage, meta: { title: 'Achievements & Leadership', description: 'Faculty achievements and org roles.', kicker: 'FACULTY', showFilters: true, apiPath: '/academics/faculty/affiliations' } },
+      { path: 'notifications', component: ModulePlaceholderPage, meta: { title: 'Notifications', description: 'Read/unread notifications.', kicker: 'FACULTY', showFilters: true, apiPath: '/notifications/my' } }
     ]
   },
 
@@ -271,8 +306,8 @@ const routes = [
           }
         }
       },
-      { path: 'academic-records', component: ModulePlaceholderPage, meta: { title: 'Academic Records', description: 'View/edit grades with audit (mock for now).', kicker: 'ADMIN', showFilters: true } },
-      { path: 'non-academic', component: ModulePlaceholderPage, meta: { title: 'Non-Academic Management', description: 'Events, achievements, participation tracking (mock for now).', kicker: 'ADMIN', showFilters: true } },
+      { path: 'academic-records', component: ModulePlaceholderPage, meta: { title: 'Academic Records', description: 'View and manage student grades.', kicker: 'ADMIN', showFilters: true, apiPath: '/admin/academic-records' } },
+      { path: 'non-academic', component: ModulePlaceholderPage, meta: { title: 'Non-Academic', description: 'Manage achievements and sports participation.', kicker: 'ADMIN', showFilters: true, apiPath: '/admin/non-academic' } },
       {
         path: 'skills',
         component: AdminCrudPage,
@@ -288,10 +323,9 @@ const routes = [
           }
         }
       },
-      { path: 'affiliations', component: ModulePlaceholderPage, meta: { title: 'Affiliation Management', description: 'Organizations and sports categories (mock for now).', kicker: 'ADMIN', showFilters: true } },
-      { path: 'violations', component: ModulePlaceholderPage, meta: { title: 'Violations Management', description: 'Create records, sanctions, and status tracking (mock for now).', kicker: 'ADMIN', showFilters: true } },
-      { path: 'medical', component: ModulePlaceholderPage, meta: { title: 'Medical Records', description: 'Sensitive module (mock for now).', kicker: 'ADMIN', showFilters: true } },
-      { path: 'documents', component: ModulePlaceholderPage, meta: { title: 'Documents Management', description: 'Document references and uploads (mock for now).', kicker: 'ADMIN', showFilters: true } },
+      { path: 'affiliations', component: ModulePlaceholderPage, meta: { title: 'Affiliations', description: 'Manage student organization leadership.', kicker: 'ADMIN', showFilters: true, apiPath: '/admin/affiliations' } },
+      { path: 'violations', component: ModulePlaceholderPage, meta: { title: 'Violations', description: 'Track and manage student disciplinary records.', kicker: 'ADMIN', showFilters: true, apiPath: '/admin/violations' } },
+      { path: 'medical', component: ModulePlaceholderPage, meta: { title: 'Medical Records', description: 'Manage student health and medical records.', kicker: 'ADMIN', showFilters: true, apiPath: '/admin/medical' } },
       {
         path: 'notifications',
         component: AdminCrudPage,

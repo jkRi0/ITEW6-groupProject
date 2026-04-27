@@ -14,6 +14,12 @@
         <span class="nav-user">Welcome, {{ userName }}</span>
         <button @click="handleLogout" class="nav-link logout-btn">Logout</button>
       </div>
+      <div class="nav-theme">
+        <button @click="toggleTheme" class="theme-toggle" :title="isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
+          <span v-if="isDark">☀️</span>
+          <span v-else>🌙</span>
+        </button>
+      </div>
       <div class="nav-ready">SYSTEM READY</div>
     </nav>
 
@@ -94,6 +100,8 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const isAuthenticated = ref(false);
+const isDark = ref(true);
+const userName = ref('Admin');
 
 onMounted(() => {
   isAuthenticated.value = localStorage.getItem('isAuthenticated') === 'true';
@@ -101,9 +109,19 @@ onMounted(() => {
   if (user.fullName) {
     userName.value = user.fullName;
   }
+  
+  // Theme initialization
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  isDark.value = savedTheme === 'dark';
+  document.documentElement.setAttribute('data-theme', savedTheme);
 });
 
-const userName = ref('Admin');
+const toggleTheme = () => {
+  isDark.value = !isDark.value;
+  const newTheme = isDark.value ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  localStorage.setItem('theme', newTheme);
+};
 
 const handleLogout = () => {
   localStorage.removeItem('isAuthenticated');
@@ -119,11 +137,13 @@ const handleLogout = () => {
   display: flex;
   gap: 20px;
   align-items: center;
+  margin-left: auto;
 }
 
 .nav-link {
   text-decoration: none;
-  color: #888;
+  color: var(--dim-text);
+  font-family: 'Space Mono', monospace;
   font-size: 0.8rem;
   letter-spacing: 1px;
   transition: color 0.3s;
@@ -135,21 +155,86 @@ const handleLogout = () => {
 }
 
 .nav-link:hover {
-  color: white;
+  color: var(--orange);
 }
 
 .nav-user {
   font-size: 0.8rem;
-  color: #fff;
+  color: var(--text-color);
   letter-spacing: 1px;
 }
 
 .logout-btn {
-  color: #ff4444;
+  color: #ff4444 !important;
 }
 
-.logout-btn:hover {
-  color: #ff6666;
+.nav-theme {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.theme-toggle {
+  background: var(--panel-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-color);
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 1rem;
+}
+
+.theme-toggle:hover {
+  border-color: var(--orange);
+  background: rgba(255, 107, 26, 0.1);
+  transform: translateY(-2px);
+}
+
+.hero-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 140px 64px 80px;
+  position: relative;
+  z-index: 2;
+  background: transparent;
+}
+
+.hero-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 140px 64px 80px 0;
+  position: relative;
+  z-index: 2;
+  background: transparent;
+}
+
+.module-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  padding: 24px 20px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s;
+  cursor: pointer;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.module-card:hover {
+  border-color: var(--orange);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(255, 107, 26, 0.15);
+}
+
+.module-card.featured {
+  grid-column: span 2;
+  background: var(--panel-bg);
+  border-color: var(--orange);
 }
 </style>
-

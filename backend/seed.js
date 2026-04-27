@@ -248,6 +248,48 @@ async function ensureAuditLog(db, query, log) {
   return inserted[0].id;
 }
 
+async function ensureCourseMaterial(db, query, cm) {
+  const existing = await query(
+    db,
+    'SELECT id FROM course_materials WHERE course_id = ? AND academic_year = ? AND term = ? LIMIT 1',
+    [cm.course_id, cm.academic_year, cm.term]
+  );
+  if (Array.isArray(existing) && existing.length > 0) return existing[0].id;
+
+  await query(
+    db,
+    'INSERT INTO course_materials (course_id, academic_year, term, syllabus, curriculum) VALUES (?, ?, ?, ?, ?)',
+    [cm.course_id, cm.academic_year, cm.term, cm.syllabus || null, cm.curriculum || null]
+  );
+  const inserted = await query(
+    db,
+    'SELECT id FROM course_materials WHERE course_id = ? AND academic_year = ? AND term = ? LIMIT 1',
+    [cm.course_id, cm.academic_year, cm.term]
+  );
+  return inserted[0].id;
+}
+
+async function ensureLesson(db, query, lesson) {
+  const existing = await query(
+    db,
+    'SELECT id FROM lessons WHERE course_id = ? AND title = ? LIMIT 1',
+    [lesson.course_id, lesson.title]
+  );
+  if (Array.isArray(existing) && existing.length > 0) return existing[0].id;
+
+  await query(
+    db,
+    'INSERT INTO lessons (course_id, title, content, order_index) VALUES (?, ?, ?, ?)',
+    [lesson.course_id, lesson.title, lesson.content || null, lesson.order_index || null]
+  );
+  const inserted = await query(
+    db,
+    'SELECT id FROM lessons WHERE course_id = ? AND title = ? LIMIT 1',
+    [lesson.course_id, lesson.title]
+  );
+  return inserted[0].id;
+}
+
 async function ensureNotification(db, query, n) {
   const existing = await query(
     db,
@@ -418,6 +460,33 @@ async function seed(db, query) {
     { title: 'Admin notice', message: 'Review new registrations and audit logs.', target_role: 'admin', created_by_user_id: adminUserId }
   ];
   for (const n of notifications) await ensureNotification(db, query, n);
+
+  const materials = [
+    {
+      course_id: courseIds[0],
+      academic_year: '2024-2025',
+      term: '1',
+      syllabus: 'Intro to Computing Syllabus\n\n1. Basic Computer Concepts\n2. Hardware and Software\n3. Operating Systems\n4. Networking Basics',
+      curriculum: 'Course Curriculum: 15 weeks total. 3 hours per week.'
+    },
+    {
+      course_id: courseIds[1],
+      academic_year: '2024-2025',
+      term: '1',
+      syllabus: 'Programming 1 Syllabus\n\n1. Logic Formulation\n2. Basic Syntax\n3. Control Structures\n4. Loops and Arrays',
+      curriculum: 'Prerequisite for Programming 2. Hands-on coding in C++.'
+    }
+  ];
+  for (const m of materials) await ensureCourseMaterial(db, query, m);
+
+  const lessons = [
+    { course_id: courseIds[0], title: 'History of Computers', content: 'Early computing devices: Abacus, ENIAC, etc.', order_index: 1 },
+    { course_id: courseIds[0], title: 'Data Representation', content: 'Binary, Octal, Hexadecimal number systems.', order_index: 2 },
+    { course_id: courseIds[1], title: 'Getting Started with C++', content: 'Hello World and basic syntax.', order_index: 1 },
+    { course_id: courseIds[1], title: 'Variables and Data Types', content: 'Integers, floats, chars, and booleans.', order_index: 2 },
+    { course_id: courseIds[1], title: 'Control Statements', content: 'If-else and Switch cases.', order_index: 3 }
+  ];
+  for (const l of lessons) await ensureLesson(db, query, l);
 }
 
 module.exports = {

@@ -1,11 +1,12 @@
 <template>
   <aside class="sidebar">
     <div class="sidebar__section">
-      <div class="sidebar__title">Navigation</div>
+      <div class="sidebar__section-title">Navigation</div>
       <RouterLink
         v-for="item in navItems"
         :key="item.to"
-        class="sidebar__link"
+        class="nav-item"
+        active-class="nav-item--active"
         :to="item.to"
       >
         {{ item.label }}
@@ -13,8 +14,8 @@
     </div>
 
     <div class="sidebar__section">
-      <div class="sidebar__title">Quick</div>
-      <RouterLink class="sidebar__link" to="/">Home</RouterLink>
+      <div class="sidebar__section-title">Quick</div>
+      <RouterLink class="nav-item" active-class="nav-item--active" to="/">Home</RouterLink>
     </div>
   </aside>
 </template>
@@ -43,8 +44,6 @@ const navItems = computed(() => {
       { label: 'Leadership & Orgs', to: '/student/leadership' },
       { label: 'Sports & Activities', to: '/student/sports' },
       { label: 'Events / Trainings', to: '/student/events' },
-      { label: 'Advising Notes', to: '/student/advising-notes' },
-      
     ];
   }
 
@@ -53,15 +52,12 @@ const navItems = computed(() => {
       { label: 'Dashboard', to: '/faculty/dashboard' },
       { label: 'My Profile', to: '/faculty/profile' },
       { label: 'My Classes / Sections', to: '/faculty/classes' },
-      { label: 'Class Roster', to: '/faculty/roster' },
-      { label: 'Student Profile', to: '/faculty/student-profile' },
+      { label: 'Student Search & Profile', to: '/faculty/student-profile' },
       { label: 'Academic Records', to: '/faculty/academic-records' },
       { label: 'Teaching Materials', to: '/faculty/materials' },
-      { label: 'Advising Notes', to: '/faculty/advising-notes' },
       { label: 'Events Participation', to: '/faculty/events' },
       { label: 'Violations', to: '/faculty/violations' },
       { label: 'Achievements & Leadership', to: '/faculty/affiliations' },
-      
     ];
   }
 
@@ -82,8 +78,6 @@ const navItems = computed(() => {
       { label: 'Affiliation Management', to: '/admin/affiliations' },
       { label: 'Violations', to: '/admin/violations' },
       { label: 'Medical Records', to: '/admin/medical' },
-      { label: 'Documents', to: '/admin/documents' },
-      
       { label: 'Audit Logs', to: '/admin/audit-logs' }
     ];
   }
@@ -94,48 +88,54 @@ const navItems = computed(() => {
 
 <style scoped>
 .sidebar {
-  padding: 18px 16px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 12px;
+}
+
+[data-theme="light"] .sidebar {
+  background: rgba(255, 255, 255, 0.5);
 }
 
 .sidebar__section {
-  border: 1px solid rgba(255, 107, 26, 0.12);
-  background: rgba(26, 26, 26, 0.55);
-  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.sidebar__title {
+.sidebar__section-title {
   font-family: 'Space Mono', monospace;
   font-size: 10px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: rgba(255, 107, 26, 0.85);
-  margin-bottom: 10px;
+  color: var(--orange);
+  opacity: 0.6;
+  margin-top: 12px;
+  margin-bottom: 8px;
 }
 
-.sidebar__link {
-  display: block;
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
   text-decoration: none;
-  font-family: 'Space Mono', monospace;
-  font-size: 12px;
-  letter-spacing: 0.8px;
-  color: rgba(245, 245, 240, 0.6);
-  padding: 10px 10px;
-  border: 1px solid transparent;
+  color: var(--dim-text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  border-left: 2px solid transparent;
   transition: all 0.2s;
 }
 
-.sidebar__link:hover {
-  color: var(--white);
-  border-color: rgba(255, 107, 26, 0.25);
-  background: rgba(255, 107, 26, 0.06);
+.nav-item:hover {
+  background: var(--panel-bg);
+  color: var(--orange);
 }
 
-.router-link-active {
+.nav-item--active {
   color: var(--white);
-  border-color: rgba(255, 107, 26, 0.4);
-  background: rgba(255, 107, 26, 0.1);
+  background: var(--panel-bg);
+  border-left-color: var(--orange);
 }
 </style>

@@ -116,42 +116,40 @@ const handleLogin = async () => {
 
 .auth-card {
   width: 100%;
-  max-width: 420px;
-  background: var(--gray);
-  border: 1px solid rgba(255, 107, 26, 0.15);
-  padding: 48px 40px;
+  max-width: 480px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  padding: 40px;
   position: relative;
-  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 0 100%);
+  transition: all 0.3s;
 }
 
 .auth-card::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: var(--orange);
-}
-
-.auth-header {
-  margin-bottom: 32px;
-  text-align: left;
+  top: -1px;
+  right: -1px;
+  width: 30px;
+  height: 30px;
+  background: var(--bg-color);
+  clip-path: polygon(100% 0, 0 0, 100% 100%);
+  border-bottom: 1px solid var(--card-border);
+  border-left: 1px solid var(--card-border);
 }
 
 .auth-header h2 {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 32px;
-  letter-spacing: 3px;
+  font-size: 48px;
+  letter-spacing: 4px;
+  color: var(--text-color);
   margin-bottom: 8px;
-  color: var(--white);
 }
 
 .auth-header p {
-  color: rgba(245, 245, 240, 0.4);
-  font-size: 13px;
-  font-family: 'Space Mono', monospace;
-  letter-spacing: 0.5px;
+  font-size: 14px;
+  color: var(--dim-text);
+  margin-bottom: 32px;
+  line-height: 1.6;
 }
 
 .auth-form {
@@ -163,32 +161,33 @@ const handleLogin = async () => {
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 10px;
 }
 
 .form-group label {
+  display: block;
   font-family: 'Space Mono', monospace;
-  font-size: 10px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 2px;
   color: var(--orange);
-  opacity: 0.8;
+  margin-bottom: 12px;
 }
 
 .form-group input {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 107, 26, 0.1);
+  width: 100%;
+  background: var(--input-bg);
+  border: 1px solid var(--card-border);
   padding: 14px;
-  color: var(--white);
+  color: var(--text-color);
   font-family: 'DM Sans', sans-serif;
   font-size: 14px;
   outline: none;
-  transition: all 0.3s;
+  transition: all 0.2s;
 }
 
 .form-group input:focus {
   border-color: var(--orange);
-  background: rgba(255, 107, 26, 0.05);
+  background: var(--panel-bg);
 }
 
 .auth-btn {
@@ -201,7 +200,7 @@ const handleLogin = async () => {
   margin-top: 32px;
   text-align: center;
   font-size: 12px;
-  color: rgba(245, 245, 240, 0.4);
+  color: var(--dim-text);
   font-family: 'Space Mono', monospace;
 }
 

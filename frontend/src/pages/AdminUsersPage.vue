@@ -83,10 +83,10 @@ onMounted(async () => {
 <style scoped>
 .banner {
   margin-top: 14px;
-  border: 1px solid rgba(255, 107, 26, 0.12);
-  background: rgba(26, 26, 26, 0.55);
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
   padding: 12px 14px;
-  color: rgba(245, 245, 240, 0.65);
+  color: var(--dim-text);
   font-size: 13px;
 }
 
@@ -100,44 +100,44 @@ onMounted(async () => {
   display: flex;
   gap: 10px;
   align-items: center;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  padding: 12px 14px;
 }
 
 .toolbar__search {
   flex: 1;
-  min-width: 240px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 107, 26, 0.1);
-  padding: 12px;
-  color: var(--white);
+  background: var(--input-bg);
+  border: 1px solid var(--card-border);
+  padding: 10px 12px;
+  color: var(--text-color);
   font-family: 'DM Sans', sans-serif;
   font-size: 14px;
   outline: none;
 }
 
 .toolbar__search:focus {
-  border-color: rgba(255, 107, 26, 0.45);
-  background: rgba(255, 107, 26, 0.05);
+  border-color: var(--orange);
 }
 
 .btn {
-  border: 1px solid rgba(255, 107, 26, 0.35);
-  background: rgba(255, 107, 26, 0.12);
-  color: rgba(245, 245, 240, 0.85);
+  border: 1px solid var(--orange);
+  background: rgba(255, 107, 26, 0.1);
+  color: var(--text-color);
   font-family: 'Space Mono', monospace;
-  font-size: 12px;
-  padding: 10px 12px;
+  font-size: 11px;
+  padding: 10px 16px;
   cursor: pointer;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
 }
 
 .btn:hover {
-  border-color: rgba(255, 107, 26, 0.55);
-  background: rgba(255, 107, 26, 0.18);
-  color: rgba(245, 245, 240, 0.95);
+  background: var(--orange);
+  color: #fff;
+  transform: translateY(-1px);
 }
 
 .btn--ghost {
@@ -148,9 +148,56 @@ onMounted(async () => {
   background: rgba(255, 107, 26, 0.08);
 }
 
+.tableWrap {
+  margin-top: 14px;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  overflow: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  text-align: left;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--card-border);
+  font-size: 13px;
+  color: var(--text-color);
+  background: var(--card-bg);
+}
+
+.table th {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--orange);
+  background: var(--panel-bg);
+}
+
+.table tr:hover td {
+  background: var(--panel-bg);
+}
+
+.pill {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-family: 'Space Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 1px solid var(--card-border);
+  background: var(--panel-bg);
+  color: var(--dim-text);
+}
+
 .empty {
   margin-top: 14px;
-  color: rgba(245, 245, 240, 0.55);
+  color: var(--dim-text);
   font-size: 12px;
 }
 

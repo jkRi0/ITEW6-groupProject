@@ -4,6 +4,10 @@
       <RouterLink to="/" class="nav-logo">CCS — CPS</RouterLink>
       <div class="nav-badge">{{ badgeText }} &nbsp;|&nbsp; v1.0</div>
       <div class="nav-actions">
+        <button class="nav-theme" @click="toggleTheme" :title="isLight ? 'Dark Mode' : 'Light Mode'">
+          <span v-if="isLight">🌙</span>
+          <span v-else>☀️</span>
+        </button>
         <div v-if="displayName" class="nav-user">{{ displayName }}</div>
         <button class="nav-bell" @click="toggleNotif" aria-label="Notifications">
           <span class="nav-bell__icon">🔔</span>
@@ -54,6 +58,15 @@ import { computed, onMounted, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import SidebarNav from '../components/SidebarNav.vue';
 import { session } from '../session.js';
+
+const isLight = ref(localStorage.getItem('theme') === 'light');
+
+function toggleTheme() {
+  isLight.value = !isLight.value;
+  const theme = isLight.value ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('theme', theme);
+}
 
 const router = useRouter();
 const route = useRoute();
@@ -157,7 +170,12 @@ const handleLogout = () => {
   router.push('/login');
 };
 
-onMounted(refreshUnread);
+onMounted(() => {
+  const theme = localStorage.getItem('theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', theme);
+  isLight.value = theme === 'light';
+  refreshUnread();
+});
 </script>
 
 <style scoped>
@@ -208,14 +226,33 @@ onMounted(refreshUnread);
   gap: 10px;
 }
 
+.nav-theme {
+  background: none;
+  border: 1px solid rgba(255, 107, 26, 0.35);
+  color: var(--orange);
+  width: 38px;
+  height: 34px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: all 0.2s;
+}
+
+.nav-theme:hover {
+  background: rgba(255, 107, 26, 0.1);
+  border-color: var(--orange);
+}
+
 .nav-user {
-  color: rgba(245, 245, 240, 0.65);
+  color: var(--dim-text);
   font-family: 'Space Mono', monospace;
   font-size: 11px;
   letter-spacing: 0.8px;
   padding: 8px 10px;
-  border: 1px solid rgba(255, 107, 26, 0.18);
-  background: rgba(255, 107, 26, 0.06);
+  border: 1px solid var(--card-border);
+  background: var(--panel-bg);
 }
 
 .nav-bell {

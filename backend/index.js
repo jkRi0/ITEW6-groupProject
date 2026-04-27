@@ -9,6 +9,7 @@ const academicsRoutes = require('./routes/academics');
 const skillsRoutes = require('./routes/skills');
 const adminRoutes = require('./routes/admin');
 const managementRoutes = require('./routes/management');
+const studentRoutes = require('./routes/student');
 const notificationsRoutes = require('./routes/notifications');
 const { seed } = require('./seed');
 
@@ -32,6 +33,7 @@ app.use('/api', academicsRoutes);
 app.use('/api', skillsRoutes);
 app.use('/api', adminRoutes);
 app.use('/api', managementRoutes);
+app.use('/api', studentRoutes);
 app.use('/api', notificationsRoutes);
 
 async function start() {
